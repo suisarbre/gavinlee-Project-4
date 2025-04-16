@@ -26,7 +26,7 @@ public class RevesActionThread extends ActionThread
 
     public String getApplicationTitle()
     {
-        return "Reve's Puzzle (Skeleton)";
+        return "Reve's Puzzle";
     }
     
     
@@ -46,6 +46,7 @@ public class RevesActionThread extends ActionThread
     
     // Displayed objects
     private Pole a, b, c, d;
+    
     private int movesMade;
     private String moveString;
     
@@ -56,13 +57,22 @@ public class RevesActionThread extends ActionThread
         moveString = "";
 
         // ADD INITIALIZATION CODE HERE
+        a = new Pole("A", disks);
+        b = new Pole("B", disks);
+        c = new Pole("C", disks);
+        d = new Pole("D", disks);
+        for (int i = disks; i >0; i--)
+        {
+            Disk disk = new Disk(i);
+            a.addDisk(disk);
+        }
 
     }
         
 
     public void executeApplication()
     {
-        // ADD CODE THAT WILL DO A SINGLE EXECUTION
+        revePuzzle(disks, a, b, c, d);
     }
 
     /**
@@ -73,9 +83,9 @@ public class RevesActionThread extends ActionThread
      */
     public void moveDisk(Pole from, Pole to)
     {
-        Disk toMove = null;
+        Disk toMove = from.removeDisk();
         
-        // ADD CODE HERE TO MOVE A DISK FROM ONE POLE TO THE OTHER
+        to.addDisk(toMove);
 
         movesMade++;
         moveString = "Move #" + movesMade 
@@ -88,6 +98,40 @@ public class RevesActionThread extends ActionThread
 
     
     // ADD METHODS HERE
+    void hanoi(int n, Pole src, Pole aux, Pole dest){
+        if (n == 1){
+            moveDisk(src, dest);
+        }
+        else{
+            hanoi(n-1, src, dest, aux);
+            moveDisk(src, dest);
+            hanoi(n-1, aux, src, dest);
+        }
+    }
+
+    int computeK(int n){
+        int k = 1;
+        while(k*(k+1)/2 < n){
+            k++;
+        }
+        return k;
+    }
+
+    void revePuzzle(int n, Pole src,Pole temp1,Pole temp2, Pole dest){
+        if (n == 0){
+            return;
+        }
+        if (n == 1){
+            moveDisk(src, dest);
+            return;
+        }
+        else{
+            int k = computeK(n);
+            revePuzzle(n-k,src,dest,temp2,temp1);
+            hanoi(k,src,temp2,dest);
+            revePuzzle(n-k,temp1,src,temp2,dest);
+        }
+    }
     
     /***************************************************************************
      * *************************************************************************
